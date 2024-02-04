@@ -92,7 +92,7 @@ func (n *Node) AppendKey(position, key int) {
 
 // append more keys to node
 func (n *Node) AppendKeys(position int, key []*Key) {
-	copy(n.key[:position], key)
+	copy(n.key[position:], key)
 	n.pointer += len(key)
 }
 
@@ -121,8 +121,8 @@ func (n *Node) AppendToLeaf(key int, t *BPTree) {
 
 		middleKey := (t.degree / 2) - 1 //which key we will use in the parent
 
-		newNode := t.CreateNode()                //create new node
-		newNode.AppendKeys(0, n.key[middleKey:]) //move to next node half // treba dodati +1 ili -1
+		newNode := t.CreateNode()                  //create new node
+		newNode.AppendKeys(0, n.key[middleKey+1:]) //move to next node half // treba dodati +1 ili -1
 
 		n.nextNode = newNode // link current node with newNode
 
