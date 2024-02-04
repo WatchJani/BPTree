@@ -1,6 +1,9 @@
 package main
 
-import "testing"
+import (
+	"math/rand"
+	"testing"
+)
 
 func Test(t *testing.T) {
 	data := []struct {
@@ -40,10 +43,10 @@ func Test(t *testing.T) {
 
 func BenchmarkTree(b *testing.B) {
 	b.StopTimer()
-	tree := NewBPTree(10, 5)
+	tree := NewBPTree(10000, 5)
 	b.StartTimer()
 
 	for i := 0; i < b.N; i++ {
-		tree.Insert(5)
+		tree.Insert(rand.Intn(5000000))
 	}
 }

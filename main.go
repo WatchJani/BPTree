@@ -41,6 +41,10 @@ func NewNode(degree int) *Node {
 	}
 }
 
+func (n *Node) SetParent(parent *Node) {
+	n.parent = parent
+}
+
 // change node to be leaf
 func (n *Node) SetLeaf() {
 	n.isLeaf = true
@@ -119,11 +123,12 @@ func (n *Node) AppendToLeaf(key int, t *BPTree) {
 			t.root = parent         // set new root
 		}
 
-		middleKey := (t.degree / 2) - 1 //which key we will use in the parent
+		middleKey := (t.degree / 2) //which key we will use in the parent
 
-		newNode := t.CreateNode()                  //create new node
-		newNode.AppendKeys(0, n.key[middleKey+1:]) //move to next node half // treba dodati +1 ili -1
+		newNode := t.CreateNode()                //create new node
+		newNode.AppendKeys(0, n.key[middleKey:]) //move to next node half // treba dodati +1 ili -1
 		newNode.SetLeaf()
+		newNode.SetParent(parent)
 
 		n.linkNode = newNode // link current node with newNode
 
@@ -131,7 +136,7 @@ func (n *Node) AppendToLeaf(key int, t *BPTree) {
 		parent.key[i].UpdateNextNode(n)
 		parent.key[i+1].UpdateNextNode(newNode)
 
-		n.pointer -= len(n.key[:middleKey+1])
+		n.pointer -= len(n.key[:middleKey])
 	}
 }
 
@@ -174,10 +179,10 @@ func main() {
 	tree.Insert(1)
 
 	tree.Insert(100)
-
+	tree.Insert(101)
 	// pointer := tree.root.key[0].pointer.pointer
 
 	// fmt.Println(pointer)
 
-	fmt.Println(tree.root.key[1].nextNode.key[3])
+	fmt.Println(tree.root.key[2].nextNode.key[2])
 }
