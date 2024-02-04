@@ -5,7 +5,7 @@ import "fmt"
 type Key struct {
 	key int
 	// value   int //add later
-	pointer *Node
+	nextNode *Node
 }
 
 func NewKey(key int) *Key {
@@ -22,15 +22,15 @@ func (k *Key) UpdateKey(key int) {
 	k.key = key
 }
 
-func (k *Key) UpdatePointer(node *Node) {
-	k.pointer = node
+func (k *Key) UpdateNextNode(node *Node) {
+	k.nextNode = node
 }
 
 type Node struct {
 	pointer  int
 	capacity int
 	parent   *Node
-	nextNode *Node
+	linkNode *Node
 	key      []*Key
 	isLeaf   bool //false
 }
@@ -123,14 +123,15 @@ func (n *Node) AppendToLeaf(key int, t *BPTree) {
 
 		newNode := t.CreateNode()                  //create new node
 		newNode.AppendKeys(0, n.key[middleKey+1:]) //move to next node half // treba dodati +1 ili -1
+		newNode.SetLeaf()
 
-		n.nextNode = newNode // link current node with newNode
+		n.linkNode = newNode // link current node with newNode
 
 		i := parent.InsertKey(n.key[middleKey].key)
-		parent.key[i].UpdatePointer(n)
-		parent.key[i+1].UpdatePointer(newNode)
+		parent.key[i].UpdateNextNode(n)
+		parent.key[i+1].UpdateNextNode(newNode)
 
-		n.capacity -= len(n.key[:middleKey])
+		n.pointer -= len(n.key[:middleKey+1])
 	}
 }
 
@@ -147,7 +148,7 @@ func (t *BPTree) Search(key int) *Node {
 	current := t.root //start searching from root, from start
 
 	for current.isLeaf != true { //go inside the tree unit come to leaf
-		current = current.key[Find(current.key, key, current.pointer)].pointer //next deeper node
+		current = current.key[Find(current.key, key, current.pointer)].nextNode //next deeper node
 	}
 
 	return current //return leaf
@@ -172,5 +173,11 @@ func main() {
 	tree.Insert(7)
 	tree.Insert(1)
 
-	fmt.Println(tree.root.key[0].pointer.key)
+	tree.Insert(100)
+
+	// pointer := tree.root.key[0].pointer.pointer
+
+	// fmt.Println(pointer)
+
+	fmt.Println(tree.root.key[1].nextNode.key[3])
 }
