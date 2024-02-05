@@ -1,8 +1,6 @@
 package main
 
-import (
-	"fmt"
-)
+import "fmt"
 
 type Key struct {
 	key int
@@ -109,13 +107,33 @@ func (t *BPTree) Insert(key int) {
 		return
 	}
 
-	leaf := t.Search(key)                //find right node
+	leaf := t.Search(key) //find right node
+
 	current := leaf.AppendToLeaf(key, t) //append to leaf
 
 	for current != nil && current.pointer == t.degree {
-		fmt.Println("yes")
+		parent := current.parent //get parent
 
-		return
+		if parent == nil { // if not exist then create them
+			parent = t.CreateNode() //create parent
+			current.parent = parent //kako je moguce da ja ovdje ovo moram updatovati ako je ovo node
+			t.root = parent         // set new root
+		}
+
+		middleKey := (t.degree / 2) //which key we will use in the parent
+
+		newNode := t.CreateNode()                        //create new node
+		newNode.AppendKeys(0, current.key[middleKey+1:]) //move to next node half // we will remove free pointer (0)
+		newNode.pointer--
+		newNode.SetParent(parent) //set the parent of this node
+
+		i := parent.InsertKey(current.key[middleKey].key)
+		parent.key[i].UpdateNextNode(current)
+
+		parent.key[i+1].UpdateNextNode(newNode)
+		current.pointer -= (len(current.key[:middleKey]) + 1)
+
+		current = current.parent
 	}
 }
 
@@ -128,7 +146,8 @@ func (n *Node) AppendToLeaf(key int, t *BPTree) *Node {
 
 		if parent == nil { // if not exist then create them
 			parent = t.CreateNode() //create parent
-			t.root = parent         // set new root
+			n.parent = parent
+			t.root = parent // set new root
 		}
 
 		middleKey := (t.degree / 2) //which key we will use in the parent
@@ -198,11 +217,15 @@ func main() {
 	tree.Insert(550)
 	tree.Insert(600)
 
-	// tree.Insert(108)
+	tree.Insert(301)
+	tree.Insert(401)
+	tree.Insert(451)
+	tree.Insert(501)
+	tree.Insert(108)
 
 	// pointer := tree.root.key[0].pointer.pointer
 
 	// fmt.Println(pointer)
 
-	fmt.Println(tree.root.key[2].nextNode.pointer)
+	fmt.Println(tree.root.key)
 }
