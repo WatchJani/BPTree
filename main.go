@@ -1,6 +1,8 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+)
 
 type Key struct {
 	key int
@@ -36,11 +38,13 @@ type Node struct {
 	// counter  int  // remove all allocation
 }
 
-func (n *Node) Link(node *Node, position int) {
-	n.linkNode = node
-	if position+1 < 6 && node.parent.key[position+1] != nil {
-		node.linkNode = node.parent.key[position+1].nextNode
+// bug is here
+func (n *Node) Link(node *Node) {
+	if n.linkNode != nil {
+		node.linkNode = n.linkNode
 	}
+
+	n.linkNode = node
 }
 
 func NewNode(degree int) *Node {
@@ -63,6 +67,7 @@ type BPTree struct {
 	capacity int //for better performance, capacity allow us preallocation of node
 	root     *Node
 	memory   []*Node
+	position int
 }
 
 // Constructor for new B+ Tree
@@ -172,7 +177,7 @@ func (n *Node) AppendToLeaf(key int, t *BPTree) *Node {
 		parent.key[i+1].UpdateNextNode(newNode)
 		n.pointer -= (len(n.key[:middleKey]) + 1)
 
-		n.Link(newNode, i+1) // link current node with newNode
+		n.Link(newNode) // link current node with newNode
 	}
 
 	return n.parent
@@ -220,14 +225,14 @@ func (t *BPTree) All() {
 
 	for current != nil {
 		for i := 0; i < current.pointer; i++ {
-			fmt.Println(current.key[i])
 			counter++
+			fmt.Println(current.key[i])
 		}
 
 		current = current.linkNode
-
-		fmt.Println(counter)
 	}
+
+	fmt.Println(counter)
 }
 
 func main() {
@@ -238,26 +243,35 @@ func main() {
 	tree.Insert(200)
 	tree.Insert(250)
 	tree.Insert(300)
+	tree.Insert(3)
 	tree.Insert(400)
 	tree.Insert(450)
+	tree.Insert(5)
 	tree.Insert(500)
 	tree.Insert(350)
 	tree.Insert(370)
+	tree.Insert(2)
 	tree.Insert(380)
 	tree.Insert(550)
 	tree.Insert(600)
 
 	tree.Insert(301)
+	tree.Insert(302)
+	tree.Insert(303)
+	tree.Insert(7)
+	tree.Insert(304)
+	tree.Insert(1)
+	tree.Insert(4)
+	tree.Insert(6)
+
 	tree.Insert(401)
 	tree.Insert(451)
 	tree.Insert(501)
 	tree.Insert(108)
 
-	// pointer := tree.root.key[0].pointer.pointer
-
-	// fmt.Println(pointer)
-
-	// fmt.Println(tree.root.key[1].nextNode.key[0].nextNode.linkNode)
+	// for i := 0; i < 1010; i++ {
+	// 	tree.Insert(rand.Intn(5000))
+	// }
 
 	tree.All()
 }
