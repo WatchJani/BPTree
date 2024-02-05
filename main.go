@@ -33,6 +33,14 @@ type Node struct {
 	linkNode *Node
 	key      []*Key
 	isLeaf   bool //false
+	// counter  int  // remove all allocation
+}
+
+func (n *Node) Link(node *Node, position int) {
+	n.linkNode = node
+	if position+1 < 6 && node.parent.key[position+1] != nil {
+		node.linkNode = node.parent.key[position+1].nextNode
+	}
 }
 
 func NewNode(degree int) *Node {
@@ -158,13 +166,13 @@ func (n *Node) AppendToLeaf(key int, t *BPTree) *Node {
 		newNode.SetLeaf()         //set that node to be leaf
 		newNode.SetParent(parent) //set the parent of this node
 
-		n.linkNode = newNode // link current node with newNode
-
 		i := parent.InsertKey(n.key[middleKey].key)
 		parent.key[i].UpdateNextNode(n)
 
 		parent.key[i+1].UpdateNextNode(newNode)
 		n.pointer -= (len(n.key[:middleKey]) + 1)
+
+		n.Link(newNode, i+1) // link current node with newNode
 	}
 
 	return n.parent
@@ -200,6 +208,28 @@ func Find(list []*Key, key int, pointer int) int {
 	return pointer
 }
 
+func (t *BPTree) All() {
+	current := t.root
+
+	//go to left first key
+	for current.isLeaf != true {
+		current = current.key[0].nextNode
+	}
+
+	var counter int
+
+	for current != nil {
+		for i := 0; i < current.pointer; i++ {
+			fmt.Println(current.key[i])
+			counter++
+		}
+
+		current = current.linkNode
+
+		fmt.Println(counter)
+	}
+}
+
 func main() {
 	tree := NewBPTree(40, 5)
 	tree.Insert(50)
@@ -227,5 +257,7 @@ func main() {
 
 	// fmt.Println(pointer)
 
-	fmt.Println(tree.root.key)
+	// fmt.Println(tree.root.key[1].nextNode.key[0].nextNode.linkNode)
+
+	tree.All()
 }
