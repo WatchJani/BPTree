@@ -1,6 +1,8 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+)
 
 type Key struct {
 	key int
@@ -37,7 +39,7 @@ type Node struct {
 
 func NewNode(degree int) *Node {
 	return &Node{
-		key: make([]*Key, degree),
+		key: make([]*Key, degree+1),
 	}
 }
 
@@ -107,15 +109,21 @@ func (t *BPTree) Insert(key int) {
 		return
 	}
 
-	leaf := t.Search(key)     //find right node
-	leaf.AppendToLeaf(key, t) //append to leaf
+	leaf := t.Search(key)                //find right node
+	current := leaf.AppendToLeaf(key, t) //append to leaf
+
+	for current != nil && current.pointer == t.degree {
+		fmt.Println("yes")
+
+		return
+	}
 }
 
 // add key to leaf
-func (n *Node) AppendToLeaf(key int, t *BPTree) {
+func (n *Node) AppendToLeaf(key int, t *BPTree) *Node {
 	n.InsertKey(key) //insert to leaf
 
-	if n.pointer == len(n.key) { //Check if is full
+	if n.pointer == t.degree { //Check if is full
 		parent := n.parent //get parent
 
 		if parent == nil { // if not exist then create them
@@ -125,19 +133,22 @@ func (n *Node) AppendToLeaf(key int, t *BPTree) {
 
 		middleKey := (t.degree / 2) //which key we will use in the parent
 
-		newNode := t.CreateNode()                //create new node
-		newNode.AppendKeys(0, n.key[middleKey:]) //move to next node half // treba dodati +1 ili -1
-		newNode.SetLeaf()
-		newNode.SetParent(parent)
+		newNode := t.CreateNode()                        //create new node
+		newNode.AppendKeys(0, n.key[middleKey:t.degree]) //move to next node half // we will remove free pointer (0)
+		// newNode.pointer--
+		newNode.SetLeaf()         //set that node to be leaf
+		newNode.SetParent(parent) //set the parent of this node
 
 		n.linkNode = newNode // link current node with newNode
 
 		i := parent.InsertKey(n.key[middleKey].key)
 		parent.key[i].UpdateNextNode(n)
-		parent.key[i+1].UpdateNextNode(newNode)
 
-		n.pointer -= len(n.key[:middleKey])
+		parent.key[i+1].UpdateNextNode(newNode)
+		n.pointer -= (len(n.key[:middleKey]) + 1)
 	}
+
+	return n.parent
 }
 
 // need to inset key on right position in node
@@ -172,17 +183,26 @@ func Find(list []*Key, key int, pointer int) int {
 
 func main() {
 	tree := NewBPTree(40, 5)
-	tree.Insert(56)
-	tree.Insert(4)
-	tree.Insert(5)
-	tree.Insert(7)
-	tree.Insert(1)
-
+	tree.Insert(50)
 	tree.Insert(100)
-	tree.Insert(101)
+	tree.Insert(150)
+	tree.Insert(200)
+	tree.Insert(250)
+	tree.Insert(300)
+	tree.Insert(400)
+	tree.Insert(450)
+	tree.Insert(500)
+	tree.Insert(350)
+	tree.Insert(370)
+	tree.Insert(380)
+	tree.Insert(550)
+	tree.Insert(600)
+
+	// tree.Insert(108)
+
 	// pointer := tree.root.key[0].pointer.pointer
 
 	// fmt.Println(pointer)
 
-	fmt.Println(tree.root.key[2].nextNode.key[2])
+	fmt.Println(tree.root.key[2].nextNode.pointer)
 }

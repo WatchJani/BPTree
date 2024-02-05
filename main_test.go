@@ -43,7 +43,7 @@ func Test(t *testing.T) {
 
 func BenchmarkTree(b *testing.B) {
 	b.StopTimer()
-	tree := NewBPTree(10000, 5)
+	tree := NewBPTree((b.N/4)+1, 5)
 	b.StartTimer()
 
 	for i := 0; i < b.N; i++ {
