@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"math/rand"
 )
 
 type Key struct {
@@ -125,13 +126,12 @@ func (t *BPTree) Insert(key int) {
 	current := leaf.AppendToLeaf(key, t) //append to leaf
 
 	for current != nil && current.pointer == t.degree {
+
 		parent := current.parent //get parent
 
 		middleKey := (t.degree / 2) //which key we will use in the parent
 		//update parent
 		// fmt.Println(n.key[4])
-
-		update := current.key[middleKey+1].nextNode
 
 		// fmt.Println("yes", update.linkNode.key[0])
 
@@ -139,16 +139,20 @@ func (t *BPTree) Insert(key int) {
 		newNode.AppendKeys(0, current.key[middleKey+1:]) //move to next node half // we will remove free pointer (0)
 		newNode.pointer--
 
-		// for update != nil {
+		// update := current.key[middleKey+1].nextNode
+
+		// //update part of leaf
+		// for i := 0; i < newNode.pointer+1; i++ {
 		// 	update.SetParent(newNode)
-		// 	// fmt.Println(update.key[0])
 		// 	update = update.linkNode //go to next leaf node
 		// }
 
+		// update := current.key[middleKey+1].nextNode
+
+		//update part of leaf
 		for i := 0; i < newNode.pointer+1; i++ {
-			update.SetParent(newNode)
-			fmt.Println(update.key[0])
-			update = update.linkNode //go to next leaf node
+			current.key[middleKey+1+i].nextNode.SetParent(newNode)
+			// update = update.linkNode //go to next leaf node
 		}
 
 		if parent == nil { // if not exist then create them
@@ -164,21 +168,6 @@ func (t *BPTree) Insert(key int) {
 
 		parent.key[i+1].UpdateNextNode(newNode)
 		current.pointer -= (len(current.key[:middleKey]) + 1)
-
-		//update parent
-		// fmt.Println(n.key[4])
-
-		// update := current.key[middleKey+1].nextNode
-
-		// fmt.Println("yes", update.linkNode.key[0])
-
-		// for update.linkNode != nil {
-		// 	// update.SetParent(newNode)
-		// 	// fmt.Println("yes", update.key[0])
-		// 	update = update.linkNode //go to next leaf node
-		// }
-
-		// fmt.Println(update.linkNode.linkNode.linkNode)
 
 		current = current.parent
 	}
@@ -205,10 +194,6 @@ func (n *Node) AppendToLeaf(key int, t *BPTree) *Node {
 		// newNode.pointer--
 		newNode.SetLeaf()         //set that node to be leaf
 		newNode.SetParent(parent) //set the parent of this node
-
-		// if key == 4728 {
-		// 	fmt.Println(n.parent.key[0])
-		// }
 
 		i := parent.InsertKey(n.key[middleKey].key)
 
@@ -290,65 +275,16 @@ func (t *BPTree) All() {
 func main() {
 	tree := NewBPTree(5000, 5)
 
-	tree.Insert(1949)
-	tree.Insert(911)
-	tree.Insert(3938)
-	tree.Insert(4605)
-	tree.Insert(1205)
-
-	tree.Insert(3244)
-	tree.Insert(2879)
-
-	tree.Insert(1466)
-	tree.Insert(4225)
-	tree.Insert(3393)
-
-	tree.Insert(3759)
-	tree.Insert(3068)
-	tree.Insert(4005)
-	tree.Insert(403)
-	tree.Insert(148)
-
-	tree.Insert(4318)
-
-	tree.Insert(2309)
-	tree.Insert(768)
-	tree.Insert(2584)
-
-	tree.Insert(4411)
-	tree.Insert(1269)
-	tree.Insert(2892)
-	tree.Insert(3247)
-
-	tree.Insert(2282)
-
-	tree.Insert(1841)
-
-	tree.Insert(938)
-
-	//problem
-	tree.Insert(3171) //dijeli se opet
-
-	tree.Insert(4583)
-	tree.Insert(3166)
-	tree.Insert(1252)
-
-	// var counter int = 30
+	var counter int = 150
 
 	// test := make([]int, counter)
 
-	// for i := 0; i < counter; i++ {
-	// 	rand := rand.Intn(5000)
+	for i := 0; i < counter; i++ {
+		rand := rand.Intn(5000)
 
-	// 	tree.Insert(rand)
-	// 	test[i] = rand
-	// }
+		tree.Insert(rand)
+		// test[i] = rand
+	}
 
 	tree.All()
-
-	// fmt.Println(test)
-
-	// 1949 911 3938 4605 1205 3244 2879 1466 4225 3393 3759 3068 4005 403 148 4318 2309 768 2584 4411 1269 2892 3247 2282 1841 938 3171 4583 3166 1252
-
-	fmt.Println(tree.root.key[2].nextNode.key[2].nextNode.parent.key[0])
 }
