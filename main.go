@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"math/rand"
 )
 
 type Key struct {
@@ -140,9 +139,15 @@ func (t *BPTree) Insert(key int) {
 		newNode.AppendKeys(0, current.key[middleKey+1:]) //move to next node half // we will remove free pointer (0)
 		newNode.pointer--
 
-		for update != nil {
+		// for update != nil {
+		// 	update.SetParent(newNode)
+		// 	// fmt.Println(update.key[0])
+		// 	update = update.linkNode //go to next leaf node
+		// }
+
+		for i := 0; i < newNode.pointer+1; i++ {
 			update.SetParent(newNode)
-			// fmt.Println(update.key[0])
+			fmt.Println(update.key[0])
 			update = update.linkNode //go to next leaf node
 		}
 
@@ -285,79 +290,65 @@ func (t *BPTree) All() {
 func main() {
 	tree := NewBPTree(5000, 5)
 
-	// tree.Insert(1890)
-	// tree.Insert(3524)
-	// tree.Insert(1838)
-	// tree.Insert(4427)
-	// tree.Insert(2405)
-	// tree.Insert(4290)
-	// tree.Insert(180)
-	// tree.Insert(603)
-	// tree.Insert(1234)
-	// tree.Insert(2910)
-	// tree.Insert(3718)
-	// tree.Insert(4193)
-	// tree.Insert(1579)
-	// tree.Insert(2373) //Dobar
+	tree.Insert(1949)
+	tree.Insert(911)
+	tree.Insert(3938)
+	tree.Insert(4605)
+	tree.Insert(1205)
 
-	// tree.Insert(686)
-	// tree.Insert(4986)
-	// tree.Insert(271)
+	tree.Insert(3244)
+	tree.Insert(2879)
 
-	// //problem
+	tree.Insert(1466)
+	tree.Insert(4225)
+	tree.Insert(3393)
 
-	// tree.Insert(4728)
+	tree.Insert(3759)
+	tree.Insert(3068)
+	tree.Insert(4005)
+	tree.Insert(403)
+	tree.Insert(148)
 
-	// tree.Insert(2268)
-	// tree.Insert(4964)
-	// tree.Insert(4467)
-	// tree.Insert(4098)
-	// tree.Insert(2293)
-	// tree.Insert(3559)
-	// tree.Insert(2467)
+	tree.Insert(4318)
 
-	var counter int = 25
+	tree.Insert(2309)
+	tree.Insert(768)
+	tree.Insert(2584)
 
-	test := make([]int, counter)
+	tree.Insert(4411)
+	tree.Insert(1269)
+	tree.Insert(2892)
+	tree.Insert(3247)
 
-	for i := 0; i < counter; i++ {
-		rand := rand.Intn(5000)
+	tree.Insert(2282)
 
-		tree.Insert(rand)
-		test[i] = rand
-	}
+	tree.Insert(1841)
+
+	tree.Insert(938)
+
+	//problem
+	tree.Insert(3171) //dijeli se opet
+
+	tree.Insert(4583)
+	tree.Insert(3166)
+	tree.Insert(1252)
+
+	// var counter int = 30
+
+	// test := make([]int, counter)
+
+	// for i := 0; i < counter; i++ {
+	// 	rand := rand.Intn(5000)
+
+	// 	tree.Insert(rand)
+	// 	test[i] = rand
+	// }
 
 	tree.All()
 
-	fmt.Println(test)
+	// fmt.Println(test)
 
-	// 1890 3524 1838 4427 2405 4290 180 603 1234 2910 3718 4193 1579 2373 686 4986 271 4728 2268 4964 4467 4098 2293 3559 2467
+	// 1949 911 3938 4605 1205 3244 2879 1466 4225 3393 3759 3068 4005 403 148 4318 2309 768 2584 4411 1269 2892 3247 2282 1841 938 3171 4583 3166 1252
 
-	// &{144 <nil>}
-	// &{300 <nil>}
-	// &{369 <nil>}
-	// &{601 <nil>}
-	// &{975 <nil>}
-	// &{1126 <nil>}
-	// &{1260 <nil>}
-	// &{1642 <nil>}
-	// &{1666 <nil>}
-	// &{1816 <nil>}
-	// &{1612 <nil>}
-	// &{1849 <nil>}
-	// &{2704 <nil>}
-	// &{3141 <nil>}
-	// &{2990 <nil>}
-	// &{3042 <nil>}
-	// &{3306 <nil>}
-	// &{3442 <nil>}
-	// &{3452 <nil>}
-	// &{3535 <nil>}
-	// &{4038 <nil>}
-	// &{4091 <nil>}
-	// &{4456 <nil>}
-	// &{4630 <nil>}
-	// &{4980 <nil>}
-
-	// fmt.Println(tree.root.key[1].nextNode.key[2])
+	fmt.Println(tree.root.key[2].nextNode.key[2].nextNode.parent.key[0])
 }
